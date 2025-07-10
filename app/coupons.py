@@ -1,6 +1,6 @@
 def aplicate_coupon(price, coupon):
     discounts = {
-        "OFFER10": 0.10,
+        "SALES10": 0.10,
         "SUPER20": 0.20,
         "WELCOME": 0.15
     }
