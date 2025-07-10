@@ -9,9 +9,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: DevOps-coupons-api  # ajusta según tu estructura
 
     steps:
       - uses: actions/checkout@v3
@@ -25,17 +22,19 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
+          pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Execute tests
         run: |
           source venv/bin/activate
           mkdir -p reports
-          pytest --junitxml=reports/results.xml \
-                 --cov=app \
-                 --cov-report=xml:reports/coverage.xml \
-                 --cov-report=html:htmlcov \
-                 tests/
+          pytest \
+            --junitxml=reports/results.xml \
+            --cov=app \
+            --cov-report=xml:reports/coverage.xml \
+            --cov-report=html:htmlcov \
+            tests/
 
       - name: Upload test-results
         uses: actions/upload-artifact@v4
@@ -44,7 +43,7 @@ jobs:
           path: reports/results.xml
           retention-days: 30
 
-      - name: Upload coverage report
+      - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
         with:
           name: htmlcov
