@@ -1,48 +1,52 @@
 name: Regression test - Coupons
 
 on:
-    push:
-        branches: [main]
-    pull_request:
-        branches: [main]
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-    test:
-        runs-on: ubuntu-latest
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: DevOps-coupons-api  # ajusta según tu estructura
 
-        steps:
-            - uses: actions/checkout@v3
+    steps:
+      - uses: actions/checkout@v3
 
-            - name: Configure Python
-              uses: actions/setup-python@v4
-              with:
-                  python-version: '3.10'
-            
-            - name: Install dependecies
-              run: |
-                python -m venv venv
-                source venv/bin/activate
-                pip install -r requirements.txt
-            
-            - name: Execute tests
-              run: |
-                source venv/bin/activate
-                pytest --junitxml=reports/results.xml \
-                       --cov=app \
-                       --cov-report=xml:reports/coverage.xml \ 
-                       --cov-report=html:htmlcov \ 
-                       tests/
+      - name: Configure Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
-            - name: Upload test-results
-              uses: actions/upload-artifact@v4
-              with:
-                name: test-results
-                path: reports/results.xml
-                retention-days: 30
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
 
-            - name: Upload Coverage Report
-              uses: actions/upload-artifact@v4
-              with:
-                name: htmlcov
-                path: htmlcov/
-                retention-days: 30
+      - name: Execute tests
+        run: |
+          source venv/bin/activate
+          mkdir -p reports
+          pytest --junitxml=reports/results.xml \
+                 --cov=app \
+                 --cov-report=xml:reports/coverage.xml \
+                 --cov-report=html:htmlcov \
+                 tests/
+
+      - name: Upload test-results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: reports/results.xml
+          retention-days: 30
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: htmlcov
+          path: htmlcov/
+          retention-days: 30
